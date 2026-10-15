@@ -2493,16 +2493,14 @@ static int decon_fb_alloc_memory(struct decon_device *decon, struct decon_win *w
 
 	fbi->screen_base = vaddr;
 
-	win->dma_buf_data[1].fence = NULL;
-	win->dma_buf_data[2].fence = NULL;
-	win->plane_cnt = 1;
+	win->plane_cnt = 0;
 
 	dpp = v4l2_get_subdevdata(decon->dpp_sd[decon->dt.dft_idma]);
-	ret = decon_map_ion_handle(decon, dpp->dev, &win->dma_buf_data[0],
+	ret = decon_map_ion_handle(decon, dpp->dev, &win->fb_buf_data,
 			handle, buf, win->idx);
 	if (!ret)
 		goto err_map;
-	map_dma = win->dma_buf_data[0].dma_addr;
+	map_dma = win->fb_buf_data.dma_addr;
 
 	dev_info(decon->dev, "alloated memory\n");
 #else
@@ -2573,6 +2571,7 @@ static int decon_acquire_window(struct decon_device *decon, int idx)
 
 	for (i = 0; i < MAX_PLANE_CNT; ++i)
 		memset(&win->dma_buf_data[i], 0, sizeof(win->dma_buf_data[i]));
+	memset(&win->fb_buf_data, 0, sizeof(win->fb_buf_data));
 
 	if (((decon->dt.out_type == DECON_OUT_DSI) || (decon->dt.out_type == DECON_OUT_DP))
 			&& (idx == decon->dt.dft_win)) {

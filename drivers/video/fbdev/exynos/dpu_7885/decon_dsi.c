@@ -749,7 +749,10 @@ int decon_mmap(struct fb_info *info, struct vm_area_struct *vma)
 	struct decon_win *win = info->par;
 	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
 
-	ret = dma_buf_mmap(win->dma_buf_data[0].dma_buf, vma, 0);
+	if (!win->fb_buf_data.dma_buf)
+		return -ENODEV;
+
+	ret = dma_buf_mmap(win->fb_buf_data.dma_buf, vma, 0);
 
 	return ret;
 #else

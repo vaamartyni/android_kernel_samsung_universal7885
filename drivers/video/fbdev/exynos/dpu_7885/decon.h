@@ -981,6 +981,7 @@ struct decon_win {
 	struct fb_videomode videomode;
 	struct decon_dma_buf_data dma_buf_data[MAX_PLANE_CNT];
 	int plane_cnt;
+	struct decon_dma_buf_data fb_buf_data;
 
 	int idx;
 	int dpp_id;
